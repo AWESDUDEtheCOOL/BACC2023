@@ -23,9 +23,9 @@ from git import Repo
 from picamera2 import Picamera2
 
 #VARIABLES
-THRESHOLD = 15       #Any desired value from the accelerometer
-REPO_PATH = "/home/pi/BACC2023"      #Your github repo path: ex. /home/pi/FlatSatChallenge
-FOLDER_PATH = "/Images"    #Your image folder path in your GitHub repo: ex. /Images
+THRESHOLD = 0      #Any desired value from the accelerometer
+REPO_PATH = ""     #Your github repo path: ex. /home/pi/FlatSatChallenge
+FOLDER_PATH = ""   #Your image folder path in your GitHub repo: ex. /Images
 
 #imu and camera initialization
 i2c = board.I2C()
@@ -67,21 +67,19 @@ def img_gen(name):
 
 def take_photo():
     """
-    This function is complete. Takes a photo when the FlatSat is shaken.
+    This function is NOT complete. Takes a photo when the FlatSat is shaken.
+    Replace psuedocode with your own code.
     """
     while True:
         accelx, accely, accelz = accel_gyro.acceleration
-        if accelx > THRESHOLD or accely > THRESHOLD or accelz > THRESHOLD:
-            time.sleep(1)
-            #Take/save/upload a picture 
-            name = "MasonM"     #Last Name, First Initial  ex. MasonM
-            imgname = img_gen(name)
-            picam2.start(show_preview=False)
-            picam2.capture_file(imgname)
-            picam2.stop()
-            git_push()
+
+        #CHECKS IF READINGS ARE ABOVE THRESHOLD
+            #PAUSE
+            #name = ""     #Last Name, First Initial  ex. MasonM
+            #TAKE PHOTO
+            #PUSH PHOTO TO GITHUB
         
-        time.sleep(1)
+        #PAUSE
 
 
 def main():
