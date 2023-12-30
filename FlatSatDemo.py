@@ -23,9 +23,9 @@ from git import Repo
 from picamera2 import Picamera2
 
 #VARIABLES
-THRESHOLD = 0       #Any desired value from the accelerometer
-REPO_PATH = ""      #Your github repo path: ex. /home/pi/FlatSatChallenge
-FOLDER_PATH = ""    #Your image folder path in your GitHub repo: ex. /home/pi/FlatSatChallenge/Images/
+THRESHOLD = 15       #Any desired value from the accelerometer
+REPO_PATH = "/home/pi/BACC2023"      #Your github repo path: ex. /home/pi/FlatSatChallenge
+FOLDER_PATH = "/Images"    #Your image folder path in your GitHub repo: ex. /Images
 
 #imu and camera initialization
 i2c = board.I2C()
@@ -39,12 +39,12 @@ def git_push():
     This function is complete. Stages, commits, and pushes new images to your GitHub repo.
     """
     try:
+        repo = Repo(REPO_PATH)
         origin = repo.remote('origin')
         print('added remote')
         origin.pull()
         print('pulled changes')
-        repo = Repo(REPO_PATH)
-        repo.git.add(FOLDER_PATH)
+        repo.git.add(REPO_PATH + FOLDER_PATH)
         repo.index.commit('New Photo')
         print('made the commit')
         origin.push()
@@ -71,11 +71,13 @@ def take_photo():
     """
     accelX, accelY, accelZ = accel_gyro.acceleration
     if accelX > THRESHOLD or accelY > THRESHOLD or accelZ > THRESHOLD:
-        time.sleep(5)
+        time.sleep(1)
         #Take/save/upload a picture 
         name = "MasonM"     #Last Name, First Initial  ex. MasonM
         imgname = img_gen(name)
-        picam2.start_and_capture_file(imgname)
+        picam2.start(show_preview=False)
+        picam2.capture_file(imgname)
+        picam2.stop()
         git_push()
 
 
