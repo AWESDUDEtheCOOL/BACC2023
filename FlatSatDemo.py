@@ -72,6 +72,7 @@ def take_photo():
     while True:
         accelx, accely, accelz = accel_gyro.acceleration
         if accelx > THRESHOLD or accely > THRESHOLD or accelz > THRESHOLD:
+            print('photo')
             time.sleep(1)
             #Take/save/upload a picture 
             name = "MasonM"     #Last Name, First Initial  ex. MasonM
