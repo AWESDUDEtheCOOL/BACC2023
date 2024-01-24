@@ -1,16 +1,27 @@
-#sensor_calc.py
+"""
+The code you will write for this module should calculate
+roll, pitch, and yaw (RPY) and calibrate your measurements
+for better accuracy. Your functions are split into two activities.
+The first is basic RPY from the accelerometer and magnetometer. The
+second is RPY using the gyroscope. Finally, write the calibration functions.
+Run plot.py to test your functions, this is important because auto_camera.py 
+relies on your sensor functions here.
+"""
+
+#import libraries
 import time
 import numpy as np
-import adafruit_fxos8700
-import adafruit_fxas21002c
 import time
 import os
 import board
 import busio
+from adafruit_lsm6ds.lsm6dsox import LSM6DSOX as LSM6DS
+from adafruit_lis3mdl import LIS3MDL
 
+#imu initialization
 i2c = busio.I2C(board.SCL, board.SDA)
-sensor1 = adafruit_fxos8700.FXOS8700(i2c)
-sensor2 = adafruit_fxas21002c.FXAS21002C(i2c)
+accel_gyro = LSM6DS(i2c)
+mag = LIS3MDL(i2c)
 
 
 #Activity 1: RPY based on accelerometer and magnetometer
@@ -37,24 +48,7 @@ def yaw_gy(prev_angle, delT, gyro):
     #TODO
     return yaw
 
-def set_initial(mag_offset = [0,0,0]):
-    #Sets the initial position for plotting and gyro calculations.
-    print("Preparing to set initial angle. Please hold the IMU still.")
-    time.sleep(3)
-    print("Setting angle...")
-    accelX, accelY, accelZ = sensor1.accelerometer #m/s^2
-    magX, magY, magZ = sensor1.magnetometer #gauss
-    #Calibrate magnetometer readings. Defaults to zero until you
-    #write the code
-    magX = magX - offset[0]
-    magY = magY - offset[1]
-    magZ = magZ - offset[2]
-    roll = roll_am(accelX, accelY,accelZ)
-    pitch = pitch_am(accelX,accelY,accelZ)
-    yaw = yaw_am(accelX,accelY,accelZ,magX,magY,magZ)
-    print("Initial angle set.")
-    return [roll,pitch,yaw]
-
+#Activity 3: Sensor calibration
 def calibrate_mag():
     #TODO: Set up lists, time, etc
     #print("Preparing to calibrate magnetometer. Please wave around.")
@@ -72,3 +66,27 @@ def calibrate_gyro():
     #TODO
     #print("Calibration complete.")
     return [0, 0, 0]
+
+def set_initial(mag_offset = [0,0,0]):
+    """
+    This function is complete. Finds initial RPY values.
+
+    Parameters:
+        mag_offset (list): magnetometer calibration offsets
+    """
+    #Sets the initial position for plotting and gyro calculations.
+    print("Preparing to set initial angle. Please hold the IMU still.")
+    time.sleep(3)
+    print("Setting angle...")
+    accelX, accelY, accelZ = accel_gyro.acceleration #m/s^2
+    magX, magY, magZ = mag.magnetic #gauss
+    #Calibrate magnetometer readings. Defaults to zero until you
+    #write the code
+    magX = magX - mag_offset[0]
+    magY = magY - mag_offset[1]
+    magZ = magZ - mag_offset[2]
+    roll = roll_am(accelX, accelY,accelZ)
+    pitch = pitch_am(accelX,accelY,accelZ)
+    yaw = yaw_am(accelX,accelY,accelZ,magX,magY,magZ)
+    print("Initial angle set.")
+    return [roll,pitch,yaw]
