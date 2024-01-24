@@ -16,16 +16,16 @@ mag = LIS3MDL(i2c)
 
 #Activity 1: RPY based on accelerometer and magnetometer
 def pitch_am(accelX,accelY,accelZ):
-    pitch = np.arctan2(accelX, np.sqrt(accelY**2 + accelZ**2))
-    return np.rad2deg(pitch)
+    pitch = np.rad2deg(np.arctan2(accelX, np.sqrt(accelY**2 + accelZ**2)))
+    return pitch
 
 def roll_am(accelX,accelY,accelZ):
-    roll = np.arctan2(accelY, np.sqrt(accelX**2 + accelZ**2))
-    return np.rad2deg(roll)
+    roll = np.rad2deg(np.arctan2(accelY, np.sqrt(accelX**2 + accelZ**2)))
+    return roll
 
 def yaw_am(accelX,accelY,accelZ,magX,magY,magZ):
     pitch = np.deg2rad(pitch_am(accelX,accelY,accelZ))
-    roll = np.deg2rad((accelX,accelY,accelZ))
+    roll = np.deg2rad(roll_am(accelX,accelY,accelZ))
     mag_x = (magX*np.cos(pitch)) + (magY*np.sin(roll)*np.sin(pitch)) + (magZ*np.cos(roll)*np.cos(pitch))
     mag_y = (magY*np.cos(roll)) - (magZ*np.sin(roll))
     return np.rad2deg(np.arctan2(-mag_y, mag_x))
